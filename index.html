@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计算机二级 WPS Office · 一页上岸</title>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--line:#e5e9f2;--text:#1f2937;--muted:#6b7280;--primary:#4f46e5;--primary2:#7c3aed;--green:#059669;--soft:#f8f9ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.75 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+.wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+header{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);color:#fff;padding:56px 0 64px;text-align:center}
+header .tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:5px 16px;font-size:13px;margin-bottom:18px}
+header h1{margin:0 0 14px;font-size:34px;line-height:1.35;letter-spacing:.5px}
+header p{margin:0 auto;max-width:640px;font-size:16px;opacity:.93}
+header .badges{margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+header .badges span{background:rgba(255,255,255,.16);border-radius:999px;padding:6px 16px;font-size:13px}
+section{padding:44px 0 0}
+h2{font-size:24px;margin:0 0 8px;text-align:center}
+.lead{text-align:center;color:var(--muted);margin:0 0 26px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+.card .ic{font-size:22px;line-height:1;margin-bottom:12px}
+.card h3{margin:0 0 8px;font-size:16px}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.7}
+.card b{color:var(--primary)}
+.demo{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px}
+.qitem{padding:18px 0;border-bottom:1px dashed var(--line)}
+.qitem:last-child{border-bottom:0;padding-bottom:0}
+.qitem:first-child{padding-top:0}
+.qtitle{font-weight:600;margin-bottom:10px}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;cursor:pointer;color:var(--text)}
+.opt:hover{border-color:var(--primary);background:var(--soft)}
+.opt.right{background:#ecfdf5;border-color:#a7f3d0;color:#065f46;font-weight:600}
+.opt.wrong{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+.opt:disabled{cursor:default}
+.exp{display:none;margin-top:10px;background:var(--soft);border-radius:10px;padding:10px 14px;font-size:13px;color:#4b5563}
+.exp.show{display:block}
+.demobar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:14px;color:var(--muted)}
+.demobar b{color:var(--primary);font-size:18px}
+.plans{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;position:relative}
+.plan.hot{border:2px solid var(--primary);box-shadow:0 12px 30px rgba(79,70,229,.1)}
+.plan .flag{position:absolute;top:-12px;left:24px;background:var(--primary);color:#fff;border-radius:999px;padding:3px 14px;font-size:12px;font-weight:700}
+.plan h3{margin:0 0 4px;font-size:18px}
+.plan .price{font-size:36px;font-weight:800;color:var(--primary);margin:6px 0 2px}
+.plan .price small{font-size:14px;font-weight:500;color:var(--muted)}
+.plan ul{list-style:none;padding:0;margin:16px 0 20px;font-size:14px}
+.plan li{padding:5px 0 5px 22px;position:relative;color:#374151}
+.plan li:before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}
+.plan button{width:100%;border:0;border-radius:11px;padding:13px;background:var(--primary);color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+.plan button.ghost{background:#eef0f8;color:var(--text)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative}
+.step .num{display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:9px;background:#eef2ff;color:var(--primary);font-weight:800;margin-bottom:12px}
+.step h3{margin:0 0 6px;font-size:16px}
+.step p{margin:0;color:var(--muted);font-size:14px}
+.faq{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 24px}
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq details:last-child{border-bottom:0}
+.faq summary{cursor:pointer;font-weight:600;font-size:15px}
+.faq p{margin:8px 0 0;color:var(--muted);font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:42px 20px 50px;line-height:2}
+.mask{display:none;position:fixed;inset:0;background:rgba(17,24,39,.5);z-index:99;align-items:center;justify-content:center;padding:20px}
+.mask.on{display:flex}
+.modal{background:#fff;border-radius:20px;padding:28px;max-width:460px;width:100%}
+.modal h3{margin:0 0 6px;font-size:20px}
+.modal p{margin:0 0 16px;color:var(--muted);font-size:14px}
+.modal input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px;outline:none}
+.modal input:focus{border-color:var(--primary)}
+.modal pre{white-space:pre-wrap;word-break:break-word;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:14px;font:13px/1.8 inherit;margin:14px 0;color:#374151}
+.modal .row{display:flex;gap:10px}
+.modal .row button{flex:1;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;background:var(--primary);color:#fff}
+.modal .row button.ghost{background:#eef0f8;color:var(--text)}
+#toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%);background:#111827;color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;display:none;z-index:120}
+@media(max-width:760px){.grid,.plans,.steps{grid-template-columns:1fr}.opts{grid-template-columns:1fr}header h1{font-size:26px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="tag">科目代码 67 · 2027 年 3 月考期适用</div>
+    <h1>计算机二级 WPS Office<br>一页上岸</h1>
+    <p>60 道理论题带解析、7 套实操 63 个评分点、正式考试倒计时、错题自动重做、21 天打卡——全都装进一个网页，打开就能刷。</p>
+    <div class="badges"><span>不用装软件</span><span>一次买断</span><span>打开就用</span><span>进度存自己电脑</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>里面有什么</h2>
+  <p class="lead">别人要翻十几个网站、存一堆资料，你只要打开这一页</p>
+  <div class="grid">
+    <div class="card"><div class="ic">✏️</div><h3>60 道理论题</h3><p>点完立刻判分，<b>每题带解析</b>。含官方公开样题，公共基础 + WPS 专项都覆盖。</p></div>
+    <div class="card"><div class="ic">📊</div><h3>7 套实操 · 63 个评分点</h3><p>文字、表格、演示三科拆到每一个小问，<b>照着做就对齐阅卷点</b>，不用猜考点。</p></div>
+    <div class="card"><div class="ic">⏱️</div><h3>正式考试模式</h3><p>全屏倒计时、能暂停、剩 30/10/5 分钟提醒，<b>到点自动收卷判分</b>，答题区当场锁死。</p></div>
+    <div class="card"><div class="ic">🔁</div><h3>错题自动重做</h3><p>答错自动收进错题本，一键生成重做卷，<b>答对一题划掉一题</b>，清零才开新套卷。</p></div>
+    <div class="card"><div class="ic">🔥</div><h3>21 天打卡</h3><p>连续天数摆在首页，状态差的日子做「1 个小问 + 10 道选择题」也算打卡。</p></div>
+    <div class="card"><div class="ic">🎬</div><h3>免费资源已整理好</h3><p>官方考纲、官方样题、B 站全套免费课程逐个核验过，<b>不用自己再翻</b>。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>先免费试做 5 题</h2>
+  <p class="lead">不用买、不用留任何信息，点一下就知道题目长什么样</p>
+  <div class="demo">
+    <div class="demobar"><span>点选项立刻判分，附带解析</span><span>答对 <b id="demo-score">0</b> / 5</span></div>
+    <div id="demo-list"></div>
+  </div>
+</section>
+
+<section>
+  <h2>两个档，随你挑</h2>
+  <p class="lead">学生价，一次买断，后面加题也不用再付钱</p>
+  <div class="plans">
+    <div class="plan hot">
+      <div class="flag">前 20 名早鸟</div>
+      <h3>早鸟版</h3>
+      <div class="price">¥9.9 <small>/ 一次买断</small></div>
+      <ul>
+        <li>完整备考台，全部功能解锁</li>
+        <li>专属链接 + 专属激活码</li>
+        <li>60 道理论题 + 7 套实操 + 监考模式</li>
+        <li>错题重做卷、21 天打卡</li>
+        <li>后续加题免费更新</li>
+      </ul>
+      <button data-plan="early">我要买 ¥9.9 早鸟版</button>
+    </div>
+    <div class="plan">
+      <h3>陪跑版</h3>
+      <div class="price">¥29.9 <small>/ 一次买断</small></div>
+      <ul>
+        <li>早鸟版全部内容</li>
+        <li>交卷后逐条批改，标出扣分点</li>
+        <li>只把做错的重排成新卷发你</li>
+        <li>每天 21:00 催你一次，随时能喊停</li>
+        <li>高频失分点记着，下一轮优先同类题</li>
+      </ul>
+      <button class="ghost" data-plan="coach">我要买 ¥29.9 陪跑版</button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>怎么拿到，就三步</h2>
+  <p class="lead">不用注册、不用下载、不用等</p>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><h3>点上面「我要买」</h3><p>自动帮你写好一句话，复制下来发我就行。</p></div>
+    <div class="step"><div class="num">2</div><h3>付款</h3><p>¥9.9 或 ¥29.9，选哪个档就发哪句话。</p></div>
+    <div class="step"><div class="num">3</div><h3>收链接 + 激活码</h3><p>打开链接、输入激活码，一次激活，以后点开直接进。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>常问的几句</h2>
+  <div class="faq">
+    <details><summary>要装什么软件吗？</summary><p>不用。就是一个网页，电脑浏览器打开就能用；练习实操题时另外装一个免费的 WPS 教育考试专用版（页面里有官方下载入口）。</p></details>
+    <details><summary>买完多久能拿到？</summary><p>看到消息就发，链接和激活码一起给你，打开即用。</p></details>
+    <details><summary>换电脑 / 换浏览器还能用吗？</summary><p>能，激活码不变，新设备输入一次就行。做题进度存在当时那台电脑的浏览器里，所以建议固定用一台练。</p></details>
+    <details><summary>手机能看吗？</summary><p>选择题手机上也能刷，实操题和正式考试建议用电脑，跟真实考场一致。</p></details>
+    <details><summary>能把链接发给同学一起用吗？</summary><p>链接随便转发，但每个链接要配自己的激活码才能打开，而且页面上会写着授权给谁。</p></details>
+  </div>
+</section>
+
+</div>
+
+<footer>一次买断 · 打开就用 · 不用装软件<br>题目与资源整理自教育部教育考试院公开样题及公开免费课程</footer>
+
+<div class="mask" id="order-mask">
+  <div class="modal">
+    <h3>话术已经写好了</h3>
+    <p>填个称呼（选填），复制这句发我就行</p>
+    <input id="buyer-name" type="text" placeholder="怎么称呼你" maxlength="20">
+    <pre id="order-text"></pre>
+    <div class="row"><button id="copy-order">复制这句话</button><button class="ghost" id="close-order">先不买</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+var DEMO = [
+  { q: '1. 栈（stack）的操作特点是？', o: ['先进先出', '后进先出', '随便哪端都能进出', '只能删除不能插入'], a: 1, e: '栈限定在同一端插入和删除，最后进去的最先出来（LIFO）。队列才是先进先出。' },
+  { q: '2. 在长度为 n 的顺序表中插入一个新元素，平均需要移动多少个元素？', o: ['约 n/2 个', 'n 个', 'n² 个', '约 log₂n 个'], a: 0, e: '插入位置等概率时，平均移动约 n/2 个元素；删除同理。这是顺序表插入 O(n) 的来源。' },
+  { q: '3. 软件生命周期中，确定系统「必须做什么」的阶段是？', o: ['概要设计', '编码', '需求分析', '软件测试'], a: 2, e: '需求分析回答「做什么」，设计回答「怎么做」，编码才动手实现。' },
+  { q: '4. WPS 表格中，公式复制后仍要固定引用 A1，应该使用？', o: ['相对引用 A1', '混合引用 A$1', '三维引用 Sheet1!A1', '绝对引用 $A$1'], a: 3, e: '行列都加 $ 才是绝对引用，复制公式时地址完全不变。只加一个 $ 是混合引用，只能固定一边。' },
+  { q: '5. 想让所有幻灯片统一出现同一个 LOGO，最省事的做法是？', o: ['在幻灯片母版里放一次', '每一页都复制粘贴一次', '给每页加同一个动画', '另存为模板再逐页套用'], a: 0, e: '母版上的对象会自动出现在基于它的所有版式中，改一次全变，是演示题的高频考点。' }
+];
+var score = 0, answered = {};
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; }); }
+function renderDemo(){
+  document.getElementById('demo-list').innerHTML = DEMO.map(function(x, i){
+    var done = answered[i] !== undefined;
+    return '<div class="qitem"><div class="qtitle">' + esc(x.q) + '</div><div class="opts">' +
+      x.o.map(function(t, j){
+        var cls = 'opt';
+        if (done && j === x.a) cls += ' right';
+        else if (done && j === answered[i]) cls += ' wrong';
+        return '<button class="' + cls + '" data-i="' + i + '" data-j="' + j + '"' + (done ? ' disabled' : '') + '>' + 'ABCD'[j] + '. ' + esc(t) + '</button>';
+      }).join('') + '</div><div class="exp' + (done ? ' show' : '') + '"><b>答案 ' + 'ABCD'[x.a] + '</b> · ' + esc(x.e) + '</div></div>';
+  }).join('');
+  document.getElementById('demo-score').textContent = score;
+}
+document.addEventListener('click', function(e){
+  if (!e.target.classList.contains('opt')) return;
+  var i = +e.target.dataset.i, j = +e.target.dataset.j;
+  if (answered[i] !== undefined) return;
+  answered[i] = j;
+  if (j === DEMO[i].a) score++;
+  renderDemo();
+});
+
+var PLAN = {
+  early: { name: '¥9.9 早鸟版', price: '¥9.9' },
+  coach: { name: '¥29.9 陪跑版', price: '¥29.9' }
+};
+var cur = 'early';
+function orderText(){
+  var n = document.getElementById('buyer-name').value.trim();
+  return '我要买【计算机二级 WPS Office · 一页上岸】\n' +
+    '档位：' + PLAN[cur].name + '（' + PLAN[cur].price + '）\n' +
+    (n ? '称呼：' + n + '\n' : '') +
+    '我这就付款，麻烦发我专属链接 + 激活码，谢谢～';
+}
+function openOrder(p){
+  cur = p;
+  document.getElementById('order-text').textContent = orderText();
+  document.getElementById('order-mask').classList.add('on');
+}
+document.querySelectorAll('[data-plan]').forEach(function(b){
+  b.addEventListener('click', function(){ openOrder(b.dataset.plan); });
+});
+document.getElementById('buyer-name').addEventListener('input', function(){
+  document.getElementById('order-text').textContent = orderText();
+});
+document.getElementById('close-order').addEventListener('click', function(){
+  document.getElementById('order-mask').classList.remove('on');
+});
+document.getElementById('order-mask').addEventListener('click', function(e){
+  if (e.target === this) this.classList.remove('on');
+});
+function toast(t){ var x = document.getElementById('toast'); x.textContent = t; x.style.display = 'block'; clearTimeout(window._t); window._t = setTimeout(function(){ x.style.display = 'none'; }, 1900); }
+function copyText(t){
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).catch(function(){ fb(t); });
+  else fb(t);
+  toast('已复制，发我就行～');
+}
+function fb(t){ var a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); } catch (e) {} a.remove(); }
+document.getElementById('copy-order').addEventListener('click', function(){ copyText(orderText()); });
+renderDemo();
+</script>
+</body>
+</html>
