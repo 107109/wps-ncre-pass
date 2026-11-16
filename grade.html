@@ -221,8 +221,32 @@ if (tag) tag.textContent = useFull
     '.gd-link{display:inline-block;margin-top:12px;color:#2f7a55;font-size:13px;text-decoration:none;border-bottom:1px dashed #2f7a55;padding-bottom:2px}',
     '.gd-link:hover{color:#215c3c}',
     '.gd-entry{margin-top:14px;padding-top:14px;border-top:1px dashed #d5e7d8}',
+    /* ---- 实操截图核分 ---- */
+    '.gd-pbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0 6px}',
+    '.gd-pnote{font-family:"方正仿宋","FangSong",serif;font-size:13.5px;line-height:1.8;color:#5b7564;background:#f7faf7;border-radius:9px;padding:9px 13px;margin:10px 0}',
+    '.gd-pscore{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}',
+    '.gd-pscore>div{background:#f4faf5;border:1px solid #d9ebdd;border-radius:12px;padding:12px 14px;text-align:center}',
+    '.gd-pscore b{display:block;font-family:"华文行楷","STXingkai",serif;font-size:27px;color:#215c3c;line-height:1.25}',
+    '.gd-pscore small{font-size:12px;color:#6b8876;font-family:"方正仿宋","FangSong",serif}',
+    '.gd-plist{display:grid;gap:9px;margin-top:13px;max-height:560px;overflow:auto;padding-right:3px}',
+    '.gd-pitem{border:1px solid #e4eee5;border-left:4px solid #b9d8c0;border-radius:11px;padding:11px 13px;background:#fbfdfb}',
+    '.gd-pitem.done{border-left-color:#4f9d6b;background:#f7fcf8}',
+    '.gd-pitem.suspect{border-left-color:#d9a441;background:#fffbf2}',
+    '.gd-pitem.miss{border-left-color:#d2604f;background:#fef8f7}',
+    '.gd-pitem.unknown{border-left-color:#9aa9b8;background:#f8fafb}',
+    '.gd-pitem .ph{font-size:13.5px;line-height:1.7;color:#24382c;font-weight:600}',
+    '.gd-pitem .pm{font-size:12px;color:#5b7564;line-height:1.7;margin-top:5px}',
+    '.gd-pitem .pm b{color:#215c3c}',
+    '.gd-pitem .pe{font-family:"方正仿宋","FangSong",serif;font-size:12.5px;color:#6a7d6e;line-height:1.7;margin-top:5px}',
+    '.gd-pops{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}',
+    '.gd-pops button{border:1px solid #d9e7db;background:#fff;color:#4b6b57;border-radius:7px;padding:4px 10px;font-size:11.5px;cursor:pointer}',
+    '.gd-pops button.on{background:#2f7a55;border-color:#2f7a55;color:#fff;font-weight:700}',
+    '.gd-badge{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;margin-right:7px;vertical-align:1px}',
+    '.gd-badge.done{background:#e6f5ea;color:#2f7a55}.gd-badge.suspect{background:#fff1d6;color:#a06f19}',
+    '.gd-badge.miss{background:#fde9e5;color:#b94838}.gd-badge.unknown{background:#eceff3;color:#64748b}',
+    '.gd-shot{background:#fff8e8;border-left:3px solid #e0a93f;border-radius:0 9px 9px 0;padding:9px 13px;font-family:"方正仿宋","FangSong",serif;font-size:13px;color:#7a5a18;line-height:1.8;margin-top:12px}',
     '@media(max-width:760px){.gd-card{padding:16px 14px}.gd-hero{padding:16px}.gd-sheet{grid-template-columns:repeat(auto-fill,minmax(132px,1fr))}}',
-    '@media print{.gd-hero,.gd-card>*:not(.gd-result),.gd-entry{display:none!important}.gd-card{border:0;box-shadow:none;padding:0;margin:0}.gd-result{display:block!important}}'
+    '@media print{.gd-hero,.gd-card>*:not(.gd-result),.gd-entry{display:none!important}.gd-card{border:0;box-shadow:none;padding:0;margin:0}.gd-result,#gd-prac-out{display:block!important}.gd-plist{max-height:none;overflow:visible}.gd-pops,.gd-quick,.gd-shot{display:none!important}}'
   ].join('\n');
 
   var V = '5.1.1';
@@ -296,6 +320,109 @@ if (tag) tag.textContent = useFull
     return map;
   }
 
+  /* ================= 实操截图核分：评分点解析与文字匹配 ================= */
+  var VISUAL_HINT = /(题注|交叉引用|目录|页眉|页脚|页码|编号|标题|正文|表格|单元格|数据|图表|幻灯片|文字|文本|数值|结果|艺术字|形状|图片|logo|第\s?\d+\s?[章节条]|图\s?\d+|表\s?\d+|\[\d+\])/i;
+
+  var ADVICE = [
+    [/页边距|页面设置|行网格|每页/, '页面布局 → 页边距／页面设置 → 自定义，截图时把对话框一起拍进来'],
+    [/样式|段前分页|大纲级别|行距|缩进|字体|字号/, '开始 → 样式窗格 → 右键「修改」，把字体／段落两个对话框都拍下来'],
+    [/多级编号|自动编号|编号格式|参考文献/, '开始 → 多级列表 → 定义新的多级列表，拍下「格式／编号」设置面板'],
+    [/题注|交叉引用/, '引用 → 插入题注／交叉引用，拍下图注文字与正文中带底纹的引用域'],
+    [/目录/, '引用 → 自动目录，目录页整页拍下来（要能看到 1/2/3 级条目）'],
+    [/分节|分隔符/, '页面布局 → 分隔符 → 分节符；打开「显示/隐藏编辑标记」再拍'],
+    [/页眉|页脚|页码/, '双击页眉区域，连页眉横线和页码一起拍；不同节要分别拍'],
+    [/条件格式|下拉列表|数据验证|有效性/, '开始 → 条件格式／数据 → 数据验证 → 设置，连规则对话框一起拍'],
+    [/公式|函数|合计|平均值|排名|VLOOKUP|SUM|IF/i, '点中有公式的单元格，把顶部编辑栏的公式连同结果一起拍清楚'],
+    [/批注|审阅/, '审阅 → 显示批注，把批注气泡与单元格位置一起拍下'],
+    [/母版|版式|背景图形|logo/i, '视图 → 幻灯片母版，拍下母版页与所用版式'],
+    [/动画|切换|换片|延迟/, '动画／切换选项卡 → 动画窗格，拍下顺序列表与计时设置'],
+    [/图表|透视表|筛选|冻结|合并|边框|列宽|行高/, '选中对象后拍下功能区设置面板与表格结果区域'],
+    [/打印|PDF|输出|保存|属性|主题/, '文件 → 信息／打印预览，拍下属性或输出设置'],
+    [/超链接|动作按钮/, '右键对象 → 超链接／动作，拍下链接目标对话框']
+  ];
+  function adviceFor(task) {
+    for (var i = 0; i < ADVICE.length; i++) if (ADVICE[i][0].test(task)) return ADVICE[i][1];
+    return '把这一项对应的 WPS 界面（含设置对话框）单独截一张图，方便逐条核对。';
+  }
+  function cleanKey(s) {
+    return String(s == null ? '' : s).replace(/^[\s「」『』“”"'’‘]+|[\s「」『』“”"'’‘，。；：、\/]+$/g, '').trim();
+  }
+  function extractKeys(task, set) {
+    var keys = [];
+    function push(s) {
+      s = cleanKey(s);
+      if (s.length >= 2 && s.length <= 30 && keys.indexOf(s) < 0) keys.push(s);
+    }
+    var re = /「([^」]{1,30})」|『([^』]{1,30})』|“([^”]{1,30})”|"([^"]{1,30})"/g, m;
+    while ((m = re.exec(task)) !== null) push(m[1] || m[2] || m[3] || m[4]);
+    var re2 = /(第\s?\d+\s?[章节条]|图\s?\d+\s?[-－]\s?\d+|表\s?\d+\s?[-－]\s?\d+|\[\d+\]|\b[A-Z]{1,2}\d{1,4}(?::[A-Z]{1,2}\d{1,4})?\b|\d+\.\d+(?:\.\d+)?|\d{1,3}(?:\.\d+)?\s?(?:cm|磅|行|字符))/gi;
+    while ((m = re2.exec(task)) !== null) push(m[1]);
+    /* 从配套素材里取几段一定会出现在屏幕上的原文，作为「做没做」的锚点 */
+    if (set && set.material) {
+      set.material.split(/\n+/).forEach(function (line) {
+        line = line.trim().replace(/^\d+[.、]\s*/, '');
+        if (line.length >= 4 && line.length <= 24 && /[\u4e00-\u9fa5]/.test(line) &&
+            /(题|章|姓名|编号|部门|销售|标题|目录|参考|摘要|序号|名称|日期)/.test(line)) push(line);
+      });
+    }
+    return keys.slice(0, 6);
+  }
+  function normLoose(s) {
+    var out = '';
+    s = String(s || '');
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      if (c >= 0xFF01 && c <= 0xFF5E) c -= 0xFEE0;
+      else if (c === 0x3000) c = 32;
+      out += String.fromCharCode(c);
+    }
+    return out.toUpperCase().replace(/[\s，。、；：！？（）()【】\[\]{}「」『』“”"'’‘·—_\/|,;:!?~`*#]/g, '');
+  }
+  /* 中文 OCR 常错一两个字：长中文词用最长公共子序列容忍 1~2 个错字；带数字的关键字必须精确 */
+  function fuzzyHit(text, key) {
+    key = normLoose(key); if (!key) return false;
+    if (text.indexOf(key) >= 0) return true;
+    if (/\d/.test(key) || key.length < 4) return false;
+    var allow = key.length >= 8 ? 2 : 1;
+    var m = key.length, prev = new Uint16Array(m + 1), cur = new Uint16Array(m + 1);
+    for (var i = 0; i < text.length; i++) {
+      cur[0] = 0;
+      for (var j = 1; j <= m; j++) {
+        cur[j] = text.charCodeAt(i) === key.charCodeAt(j - 1)
+          ? prev[j - 1] + 1 : Math.max(prev[j], cur[j - 1]);
+      }
+      var tmp = prev; prev = cur; cur = tmp;
+    }
+    return prev[m] >= m - allow;
+  }
+  function deriveChecks(set, text) {
+    var tasks = (set && set.tasks) || [];
+    var raw = String(text || '').trim();
+    var n = normLoose(raw);
+    return tasks.map(function (t, i) {
+      var keys = extractKeys(t, set);
+      var visual = keys.length > 0 && VISUAL_HINT.test(t);
+      var hit = [], state;
+      if (!visual) state = 'unknown';
+      else if (!raw) state = 'unknown';
+      else {
+        hit = keys.filter(function (k) { return fuzzyHit(n, k); });
+        state = hit.length === keys.length ? 'done' : (hit.length ? 'suspect' : 'miss');
+      }
+      return { i: i, text: t, keys: keys, visual: visual, hit: hit, state: state, advice: adviceFor(t) };
+    });
+  }
+  function shotPlan(set, checks) {
+    var app = (set && set.app) || '';
+    var list = [];
+    if (app === '文字') list = ['整页预览（含标题编号、页眉页脚、页码）', '开始 → 样式窗格与「修改样式」对话框', '引用 → 题注／交叉引用／目录设置', '页面布局 → 页边距／分节符设置'];
+    else if (app === '表格') list = ['整张工作表（含表头、计算结果与格式）', '点中有公式的单元格，拍下编辑栏', '条件格式／数据验证规则对话框', '图表或透视表（含标题与字段）'];
+    else list = ['幻灯片缩略图总览（看版式、节、顺序）', '幻灯片母版与所用版式', '动画窗格与切换计时设置', '超链接／动作按钮设置对话框'];
+    var missing = checks.filter(function (c) { return c.state === 'miss' || c.state === 'suspect'; });
+    if (missing.length) list.push('补拍以上 ' + missing.length + " 项对应的界面（每张图只拍一个设置面板，别缩小）");
+    return list;
+  }
+
   function loadTess() {
     return new Promise(function (resolve, reject) {
       if (window.Tesseract) return resolve();
@@ -332,8 +459,8 @@ if (tag) tag.textContent = useFull
       '<div class="gd gd-wrap">',
       '  <div class="gd-hero">',
       '    <h2>智能批改 · 拍照判分</h2>',
-      '    <p>把答题卡、草稿纸或者屏幕截图放进来，系统在本机读出答案、逐题核对，当场出成绩单和错题解析。不用等谁回复，也不用把文件交给任何人。</p>',
-      '    <div class="gd-steps"><span>① 上传图片</span><span>② 识别并核对</span><span>③ 一键出分</span></div>',
+      '    <p>答题卡、WPS 界面截图、扫描件都能放进来：选择题自动读答案判分，实操题按 30 套评分点逐项核分，看得见的自动核对、看不见的列清单补拍，当场出成绩单和纠错建议。</p>',
+      '    <div class="gd-steps"><span>① 上传截图 / 扫描件</span><span>② 识别并核对</span><span>③ 出分 + 纠错清单</span></div>',
       '    <div class="gd-privacy">图片、答案与成绩只保存在这台设备的浏览器里，不上传服务器，也不会发给任何人。</div>',
       '  </div>',
 
@@ -383,11 +510,19 @@ if (tag) tag.textContent = useFull
 
       opts.practical && opts.practical.length ? [
         '  <div class="gd-card">',
-        '    <h3><em>＋</em> 实操评分点核对</h3>',
-        '    <p class="gd-tip">做完一套实操，照着评分点勾一遍，系统按官方分值当场折算得分。</p>',
+        '    <h3><em>＋</em> 实操截图批改 · 按评分点核分</h3>',
+        '    <p class="gd-tip">选一套实操 → 上传做好的界面截图或扫描件 → 系统在图上找文字、编号、数据和结果，逐条标出「已做到 / 存疑 / 没找到 / 截图看不见」，并给出补拍位置与操作路径。识别不准可以手动改判。</p>',
         '    <select class="gd-sel" id="gd-prac-sel"></select>',
-        '    <div class="gd-tasks" id="gd-prac-tasks"></div>',
-        '    <div class="gd-inline" id="gd-prac-score">勾选后这里显示折算分</div>',
+        '    <div class="gd-pbar">',
+        '      <button class="gd-btn" id="gd-prac-ocr">识别截图并核分</button>',
+        '      <button class="gd-btn ghost sm" id="gd-prac-recheck">只用文字重新核对</button>',
+        '      <span class="gd-status" id="gd-prac-status" style="margin:0"></span>',
+        '    </div>',
+        '    <div class="gd-progress" id="gd-prac-prog"><i id="gd-prac-progbar"></i></div>',
+        '    <p class="gd-pnote">上面第 1 步上传的图片，这里会一起用；中文界面请把识别语言切成「含中文（慢）」。扫描件建议勾「黑白二值 + 放大细节」。</p>',
+        '    <label class="gd-label" for="gd-prac-text">识别到的界面文字（可手动补充 / 修改）</label>',
+        '    <textarea class="gd-area" id="gd-prac-text" placeholder="点「识别截图并核分」自动填入；也可以直接把 WPS 界面里看到的文字粘进来，一样能逐条核对。"></textarea>',
+        '    <div id="gd-prac-out"></div>',
         '  </div>'
       ].join('') : '',
 
@@ -558,6 +693,33 @@ if (tag) tag.textContent = useFull
       if (!c) { box.innerHTML = '<div class="ph">选好图片后，这里能看到增强后的效果</div>'; return; }
       box.innerHTML = ''; box.appendChild(c);
     }
+    /* ---- OCR：选择题与实操共用同一批图片、同一套图像增强 ---- */
+    async function ocrImages(lang, onProg) {
+      var tell = onProg || function (v, s) { progress(v); if (s) status(s); };
+      if (!images.length) throw new Error('NO_IMAGE');
+      tell(6, '正在准备识别引擎…');
+      await withTimeout(loadTess(), 28000);
+      tell(18, '识别引擎就绪，正在读图…');
+      var worker = null, texts = [];
+      var onLog = function (m) {
+        if (m && m.status === 'recognizing text') tell(18 + Math.round((m.progress || 0) * 70), '');
+      };
+      var opt = tessOptions(lang, onLog);
+      try {
+        if (window.Tesseract.createWorker) worker = await window.Tesseract.createWorker(lang, 1, opt);
+        for (var i = 0; i < images.length; i++) {
+          var c = process(images[i]);
+          if (!c) continue;
+          var r = worker ? await worker.recognize(c) : await window.Tesseract.recognize(c, lang, opt);
+          texts.push((r && r.data && r.data.text) || '');
+          tell(18 + Math.round(((i + 1) / images.length) * 74), '');
+        }
+      } finally {
+        if (worker) { try { await worker.terminate(); } catch (e2) {} }
+      }
+      return texts.join('\n').trim();
+    }
+
     ['gd-enhance', 'gd-binary', 'gd-up'].forEach(function (id, k) {
       $(id).addEventListener('change', function () {
         view[['enhance', 'binary', 'up'][k]] = this.checked; drawPreview();
@@ -574,32 +736,7 @@ if (tag) tag.textContent = useFull
       if (!images.length) { status('先放一张答题纸或截图进来，也可以直接在下面填答案。'); return; }
       btn.disabled = true; progress(6); status('正在准备识别引擎…');
       try {
-        await withTimeout(loadTess(), 28000);
-        progress(18); status('识别引擎就绪，正在读图…');
-        var worker = null, texts = [];
-        var onLog = function (m) {
-          if (m && m.status === 'recognizing text') progress(18 + Math.round((m.progress || 0) * 70));
-        };
-        var opt = tessOptions(view.lang, onLog);
-        try {
-          if (window.Tesseract.createWorker) {
-            worker = await window.Tesseract.createWorker(view.lang, 1, opt);
-          }
-          for (var i = 0; i < images.length; i++) {
-            var c = process(images[i]);
-            if (!c) continue;
-            var r = worker
-              ? await worker.recognize(c)
-              : await window.Tesseract.recognize(c, view.lang, opt);
-            texts.push((r && r.data && r.data.text) || '');
-            progress(18 + Math.round(((i + 1) / images.length) * 74));
-          }
-          if (worker) { try { await worker.terminate(); } catch (e) {} }
-        } catch (e) {
-          if (worker) { try { await worker.terminate(); } catch (e2) {} }
-          throw e;
-        }
-        ocrText = texts.join('\n').trim();
+        ocrText = await ocrImages(view.lang);
         $('gd-text').value = ocrText;
         var got = parseAnswers(ocrText, activeBank().length);
         Object.keys(got).forEach(function (k) { answers[k] = got[k]; });
@@ -741,31 +878,121 @@ if (tag) tag.textContent = useFull
       $('gd-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
-    /* ---- 实操评分点自评 ---- */
+    /* ---- 实操截图核分 ---- */
     if (opts.practical && opts.practical.length) {
-      var sel = $('gd-prac-sel');
-      sel.innerHTML = opts.practical.map(function (g, i) {
-        return '<option value="' + i + '">' + h(g.t) + '（' + g.tasks.length + ' 项）</option>';
+      var psel = $('gd-prac-sel');
+      psel.innerHTML = opts.practical.map(function (g, i) {
+        return '<option value="' + i + '">' + h(g.t) + '（' + (g.tasks || []).length + ' 项）</option>';
       }).join('');
+      var pset = opts.practical[0], pchecks = [], ptext = '';
+
+      function pProg(v) {
+        var el = $('gd-prac-prog');
+        if (v === null) { el.classList.remove('on'); return; }
+        el.classList.add('on'); $('gd-prac-progbar').style.width = v + '%';
+      }
+      function pStatus(s) { $('gd-prac-status').textContent = s; }
+      function pScore() {
+        var n = pchecks.length || 1;
+        var full = pset && pset.app === '演示' ? 20 : 30;
+        var c = function (s) { return pchecks.filter(function (x) { return x.state === s; }).length; };
+        var done = c('done'), sus = c('suspect'), miss = c('miss'), unk = c('unknown');
+        return {
+          full: full, done: done, sus: sus, miss: miss, unk: unk, total: pchecks.length,
+          confirmed: (done / n * full).toFixed(1),
+          upper: ((done + sus + unk) / n * full).toFixed(1)
+        };
+      }
+      var LABEL = { done: '已做到', suspect: '存疑', miss: '没找到', unknown: '需补图' };
+
       function renderPrac() {
-        var g = opts.practical[+sel.value] || opts.practical[0];
-        $('gd-prac-tasks').innerHTML = g.tasks.map(function (t, i) {
-          return '<label class="gd-task"><input type="checkbox" data-i="' + i + '"><span>' + h(t) + '</span></label>';
-        }).join('');
-        updatePrac(g);
+        var s = pScore();
+        var shots = shotPlan(pset, pchecks);
+        var list = pchecks.map(function (c, i) {
+          var ev;
+          if (!c.visual) ev = '属于文件内部设置，截图看不出来；请打开对应设置面板核对。';
+          else if (!ptext.trim()) ev = '还没有识别文字；上传截图或把界面文字粘到上面。';
+          else if (c.hit.length) ev = '图上读到：<b>' + h(c.hit.join(' / ')) + '</b>';
+          else ev = '未在图上找到：<b>' + h(c.keys.join(' / ')) + '</b>（也可能在没截到的区域）';
+          var ops = ['done', 'suspect', 'miss', 'unknown'].map(function (k) {
+            return '<button data-i="' + i + '" data-s="' + k + '" class="' + (c.state === k ? 'on' : '') + '">' + LABEL[k] + '</button>';
+          }).join('');
+          return '<div class="gd-pitem ' + c.state + '">' +
+            '<div class="ph"><span class="gd-badge ' + c.state + '">' + LABEL[c.state] + '</span>' + h(c.text) + '</div>' +
+            '<div class="pm">' + ev + '</div>' +
+            '<div class="pe">核对路径：' + h(c.advice) + '</div>' +
+            '<div class="gd-pops">' + ops + '</div></div>';
+        }).join('') || '<div class="gd-item good"><div class="t">这套题没有评分点数据。</div></div>';
+
+        $('gd-prac-out').innerHTML = [
+          '<div class="gd-pscore">',
+          '  <div><b>' + s.confirmed + '</b><small>已确认得分 / ' + s.full + ' 分</small></div>',
+          '  <div><b>' + s.upper + '</b><small>补图后最高可能 / ' + s.full + ' 分</small></div>',
+          '  <div><b>' + s.done + ' / ' + s.total + '</b><small>截图已确认</small></div>',
+          '  <div><b>' + (s.sus + s.unk + s.miss) + '</b><small>待处理项</small></div>',
+          '</div>',
+          '<div class="gd-shot"><b>建议补拍的截图</b><br>' + shots.map(function (x, i) {
+            return (i + 1) + '. ' + h(x);
+          }).join('<br>') + '</div>',
+          '<div class="gd-plist">' + list + '</div>',
+          '<div class="gd-quick" style="margin-top:14px">',
+          '  <button class="gd-btn sec" id="gd-prac-copy">复制核分单</button>',
+          '</div>'
+        ].join('');
       }
-      function updatePrac(g) {
-        var boxes = $('gd-prac-tasks').querySelectorAll('input');
-        var n = 0; boxes.forEach(function (b) { if (b.checked) n++; });
-        var full = g.app === '演示' ? 20 : 30;
-        var score = boxes.length ? (n / boxes.length * full).toFixed(1) : '0.0';
-        $('gd-prac-score').textContent = '已完成 ' + n + ' / ' + boxes.length + ' 项 · 折算 ' + score + ' / ' + full + ' 分';
+      function analyzePrac() {
+        pset = opts.practical[+psel.value] || opts.practical[0];
+        ptext = $('gd-prac-text').value || '';
+        pchecks = deriveChecks(pset, ptext);
+        renderPrac();
       }
-      sel.addEventListener('change', renderPrac);
-      $('gd-prac-tasks').addEventListener('change', function () {
-        updatePrac(opts.practical[+sel.value] || opts.practical[0]);
+      function pracReport() {
+        var s = pScore();
+        var t = '【实操截图核分单】' + (pset && pset.t ? pset.t : '实操题') + '\n';
+        t += new Date().toLocaleString('zh-CN') + '\n';
+        t += '识别文字 ' + ptext.trim().length + ' 字 · 评分点 ' + s.total + ' 项\n';
+        t += '已确认 ' + s.confirmed + ' / ' + s.full + ' 分 · 补图后最高 ' + s.upper + ' 分\n';
+        t += '已做到 ' + s.done + ' 项 · 存疑 ' + s.sus + ' 项 · 没找到 ' + s.miss + ' 项 · 需补图 ' + s.unk + ' 项\n\n';
+        pchecks.forEach(function (c, i) {
+          t += (i + 1) + '. [' + LABEL[c.state] + '] ' + c.text + '\n';
+          if (c.visual && c.hit.length) t += '   图上读到：' + c.hit.join(' / ') + '\n';
+          t += '   核对路径：' + c.advice + '\n\n';
+        });
+        t += '建议补拍：\n' + shotPlan(pset, pchecks).map(function (x, i) { return '  ' + (i + 1) + '. ' + x; }).join('\n') + '\n';
+        return t;
+      }
+
+      psel.addEventListener('change', function () { analyzePrac(); pStatus('已切换题目，按当前文字重新核对。'); });
+      $('gd-prac-recheck').addEventListener('click', function () { analyzePrac(); pStatus('已按当前文字重新核对。'); });
+      $('gd-prac-ocr').addEventListener('click', async function () {
+        if (!images.length) { pStatus('先在上方第 1 步上传截图，或直接把界面文字粘到下面。'); return; }
+        var btn = this; btn.disabled = true;
+        try {
+          var lang = view.lang === 'eng' ? 'chi_sim' : view.lang;
+          var txt = await ocrImages(lang, function (v, s) { pProg(v); if (s) pStatus(s); });
+          ptext = txt; $('gd-prac-text').value = txt;
+          analyzePrac();
+          pStatus(txt ? ('读完 ' + images.length + ' 张图，已按 ' + pchecks.length + ' 个评分点核对一遍，可手动改判。')
+                      : '没读到文字，可以直接在下面粘贴界面文字，照样能核分。');
+        } catch (e) {
+          pStatus('识别服务这次没连上；在下面粘贴界面文字，照样能逐条核分。');
+        } finally { btn.disabled = false; pProg(null); }
       });
-      renderPrac();
+      $('gd-prac-out').addEventListener('click', function (e) {
+        var b = e.target.closest('button[data-s]');
+        if (b) { pchecks[+b.dataset.i].state = b.dataset.s; renderPrac(); return; }
+        if (e.target.id === 'gd-prac-copy') {
+          var t = pracReport(), ta = document.createElement('textarea');
+          ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+          document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); } catch (err) {}
+          try { navigator.clipboard.writeText(t); } catch (err) {}
+          document.body.removeChild(ta);
+          e.target.textContent = '核分单已复制 ✓';
+          var self = e.target; setTimeout(function () { self.textContent = '复制核分单'; }, 1700);
+        }
+      });
+      analyzePrac();
     }
 
     /* ---- 独立批改站入口 ---- */
@@ -781,7 +1008,11 @@ if (tag) tag.textContent = useFull
     }
   }
 
-  window.WPSGrade = { mount: mount, parseAnswers: parseAnswers };
+  window.WPSGrade = {
+    mount: mount, parseAnswers: parseAnswers,
+    deriveChecks: deriveChecks, extractKeys: extractKeys,
+    fuzzyHit: fuzzyHit, adviceFor: adviceFor
+  };
 })();
 
 WPSGrade.mount(document.getElementById('grade-mount'), {
